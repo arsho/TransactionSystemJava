@@ -111,20 +111,62 @@ public class TransactionTests {
 
     @Test
     public void testTransferRequestForAmountGreaterThanAvailableBalanceTransactionExecutedWhenBalanceConstrainMet() {
+        TransactionManager transactionManager = new TransactionManager();
+        int balance;
+        boolean hasPendingTransactionsFlag;
+        
         // Create firstAccount with Initial Balance 100
+        Account gilfoyle = new Account("125", "Gilfoyle", 100);
+        
         // Create secondAccount with Initial Balance 2000
+        Account dinesh = new Account("126", "Dinesh", 2000);                
 
         // Create a transfer request of 700 from firstAccount to secondAccount
+        Transaction gilfoyleToDineshTransfer = new Transaction(TransactionType.TRANSFER_TYPE, gilfoyle, dinesh, 700);
+        transactionManager.addTransaction(gilfoyleToDineshTransfer);
+        
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+        
         // Balance Check : FirstAccount -> 100
+        balance = gilfoyle.getAccountBalance();
+        System.out.println(gilfoyle.toString());
+        assertEquals(100, balance);        
+        
         // Balance Check : SecondAccount -> 2000
+        balance = dinesh.getAccountBalance();
+        System.out.println(dinesh.toString());
+        assertEquals(2000, balance);                
+
         // Add a Deposit request of 900 to FirstAccount
+        Transaction gilfoyleDeposit = new Transaction(TransactionType.DEPOSIT_TYPE, gilfoyle, 900);
+        transactionManager.addTransaction(gilfoyleDeposit);
+        
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Balance Check : FirstAccount: 1000
+        balance = gilfoyle.getAccountBalance();
+        System.out.println(gilfoyle.toString());
+        assertEquals(1000, balance);        
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Check: there should be no pending transactions at this point
+        hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
+        System.out.println(hasPendingTransactionsFlag);
+        assertEquals(false, hasPendingTransactionsFlag);
+
         // Balance Check : FirstAccount -> 300
+        balance = gilfoyle.getAccountBalance();
+        System.out.println(gilfoyle.toString());
+        assertEquals(300, balance);        
+
         // Balance Check : SecondAccount -> 2700
+        balance = dinesh.getAccountBalance();
+        System.out.println(dinesh.toString());
+        assertEquals(2700, balance);                
     }
 
     @Test
