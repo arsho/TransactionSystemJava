@@ -6,10 +6,10 @@ import org.junit.Test;
 
 public class TransactionTests {
 
-    private TransactionManager transactionManager = new TransactionManager();
 
     @Test
     public void depositAccountCheckBalanceAndThenWithdraw_AllTransactionsSuccessful() {
+        TransactionManager transactionManager = new TransactionManager();
         // Create Account with Balance 0
         Account nicola = new Account("123", "Nicola");
 
@@ -17,8 +17,8 @@ public class TransactionTests {
         Transaction nicolaDeposit = new Transaction(TransactionType.DEPOSIT_TYPE, nicola, 100);
 
         // Pre-check : transactionManager Should have pending transactions at this point
-        this.transactionManager.addTransaction(nicolaDeposit);
-        boolean hasPendingTransactionsFlag = this.transactionManager.hasPendingTransactions();
+        transactionManager.addTransaction(nicolaDeposit);
+        boolean hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
         System.out.println(hasPendingTransactionsFlag);
         assertEquals(true, hasPendingTransactionsFlag);
 
@@ -28,10 +28,10 @@ public class TransactionTests {
         assertEquals(0, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
-        this.transactionManager.processPendingTransactions();
+        transactionManager.processPendingTransactions();
 
         // Check : there should not be any pending Transactions now
-        hasPendingTransactionsFlag = this.transactionManager.hasPendingTransactions();
+        hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
         System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
@@ -42,13 +42,13 @@ public class TransactionTests {
 
         // Create a Withdraw of 50 on that account
         Transaction nicolaWithdraw = new Transaction(TransactionType.WITHDRAW_TYPE, nicola, 50);
-        this.transactionManager.addTransaction(nicolaWithdraw);
+        transactionManager.addTransaction(nicolaWithdraw);
 
         // Perform a ProcessPendingTransactions() to process this
-        this.transactionManager.processPendingTransactions();
+        transactionManager.processPendingTransactions();
 
         // check : No pending Transactions at this point
-        hasPendingTransactionsFlag = this.transactionManager.hasPendingTransactions();
+        hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
         System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
@@ -56,24 +56,57 @@ public class TransactionTests {
         balance = nicola.getAccountBalance();
         System.out.println(nicola.toString());
         assertEquals(50, balance);
-
     }
 
     @Test
     public void test_WithDrawRequestForAmountGreaterThanAvailableBalance_TransactionExecutedWhenBalanceConstrainMet() {
+        
+        TransactionManager transactionManager = new TransactionManager();
         // Create account with 75 as initial Balance
+        Account pikachu = new Account("124", "Pikachu", 75);
+        
         // Add a withdraw request of 100 (exceeding the available balance)
+        Transaction pikachuWithdraw = new Transaction(TransactionType.WITHDRAW_TYPE, pikachu, 100);
+        transactionManager.addTransaction(pikachuWithdraw);
+
         // Check Balance: should be 75
+        int balance = pikachu.getAccountBalance();
+        System.out.println(pikachu.toString());
+        assertEquals(75, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+        
         // Add a deposit request to that account of 75
+        Transaction pikachuDeposit = new Transaction(TransactionType.DEPOSIT_TYPE, pikachu, 75);
+        transactionManager.addTransaction(pikachuDeposit);
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // check : there should be pending transactions at this point
+        boolean hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
+        System.out.println(hasPendingTransactionsFlag);
+        assertEquals(true, hasPendingTransactionsFlag);
+
         // check Balance: should be 150
+        balance = pikachu.getAccountBalance();
+        System.out.println(pikachu.toString());
+        assertEquals(150, balance);        
+        
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Check: there should be no pending transactions at this point
+        hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
+        System.out.println(hasPendingTransactionsFlag);
+        assertEquals(false, hasPendingTransactionsFlag);
+
         // Balance Check : should be 50 (withdraw request of 100 should be successfull
         // at this point)
+        balance = pikachu.getAccountBalance();
+        System.out.println(pikachu.toString());
+        assertEquals(50, balance);        
     }
 
     @Test
