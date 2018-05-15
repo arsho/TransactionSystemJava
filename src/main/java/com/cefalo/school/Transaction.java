@@ -10,33 +10,36 @@ public class Transaction {
     public Account destinationAccount;
     public int amount;
     public boolean isProcessed;
+    public boolean isRollbacked;
 
     Transaction(TransactionType transactionType, Account account, int amount) {
         this.transactionId = UUID.randomUUID();
         this.isProcessed = false;
+        this.isRollbacked = false;
         this.transactionType = transactionType;
         this.sourceAccount = account;
         this.amount = amount;
     }
 
-    Transaction(TransactionType transactionType, Account sourceAccount, 
+    Transaction(TransactionType transactionType, Account sourceAccount,
             Account destinationAccount,
             int amount) {
-        this.transactionId = UUID.randomUUID();
-        this.isProcessed = false;
-        this.transactionType = transactionType;
-        this.sourceAccount = sourceAccount;
+        this(transactionType, sourceAccount, amount);
         this.destinationAccount = destinationAccount;
-        this.amount = amount;        
     }
+
     /* Process transaction */
     public boolean process() {
         Processor processor = new Processor();
-        this.isProcessed = processor.process(this);
-        return this.isProcessed;
+        return processor.process(this);
     }
 
     public boolean isPending() {
         return this.isProcessed;
     }
+
+    public boolean isIsRollbacked() {
+        return isRollbacked;
+    }
+
 }

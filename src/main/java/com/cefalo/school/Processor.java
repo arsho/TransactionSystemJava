@@ -6,14 +6,22 @@ public class Processor {
 
     public boolean process(Transaction transaction) {
         this.transaction = transaction;
-        if (this.transaction.transactionType == TransactionType.DEPOSIT_TYPE) {
-            return this.processDeposit();
-        } else if (this.transaction.transactionType == TransactionType.WITHDRAW_TYPE) {
-            return this.processWithdraw();
-        } else if (this.transaction.transactionType == TransactionType.TRANSFER_TYPE) {
-            return this.processTransfer();
+        boolean isSucceed = false;
+        if (null != this.transaction.transactionType) switch (this.transaction.transactionType) {
+            case DEPOSIT_TYPE:
+                isSucceed = this.processDeposit();
+                break;
+            case WITHDRAW_TYPE:
+                isSucceed = this.processWithdraw();
+                break;
+            case TRANSFER_TYPE:
+                isSucceed = this.processTransfer();
+                break;
+            default:
+                break;
         }
-        return false;
+        this.transaction.isProcessed = isSucceed;
+        return isSucceed;
     }
 
     public boolean processDeposit() {

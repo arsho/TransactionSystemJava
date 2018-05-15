@@ -6,7 +6,6 @@ import org.junit.Test;
 
 public class TransactionTests {
 
-
     @Test
     public void depositAccountCheckBalanceAndThenWithdraw_AllTransactionsSuccessful() {
         TransactionManager transactionManager = new TransactionManager();
@@ -60,11 +59,11 @@ public class TransactionTests {
 
     @Test
     public void test_WithDrawRequestForAmountGreaterThanAvailableBalance_TransactionExecutedWhenBalanceConstrainMet() {
-        
+
         TransactionManager transactionManager = new TransactionManager();
         // Create account with 75 as initial Balance
         Account pikachu = new Account("124", "Pikachu", 75);
-        
+
         // Add a withdraw request of 100 (exceeding the available balance)
         Transaction pikachuWithdraw = new Transaction(TransactionType.WITHDRAW_TYPE, pikachu, 100);
         transactionManager.addTransaction(pikachuWithdraw);
@@ -76,7 +75,7 @@ public class TransactionTests {
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
         transactionManager.processPendingTransactions();
-        
+
         // Add a deposit request to that account of 75
         Transaction pikachuDeposit = new Transaction(TransactionType.DEPOSIT_TYPE, pikachu, 75);
         transactionManager.addTransaction(pikachuDeposit);
@@ -92,8 +91,8 @@ public class TransactionTests {
         // check Balance: should be 150
         balance = pikachu.getAccountBalance();
         System.out.println(pikachu.toString());
-        assertEquals(150, balance);        
-        
+        assertEquals(150, balance);
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
         transactionManager.processPendingTransactions();
 
@@ -106,7 +105,7 @@ public class TransactionTests {
         // at this point)
         balance = pikachu.getAccountBalance();
         System.out.println(pikachu.toString());
-        assertEquals(50, balance);        
+        assertEquals(50, balance);
     }
 
     @Test
@@ -114,41 +113,41 @@ public class TransactionTests {
         TransactionManager transactionManager = new TransactionManager();
         int balance;
         boolean hasPendingTransactionsFlag;
-        
+
         // Create firstAccount with Initial Balance 100
         Account gilfoyle = new Account("125", "Gilfoyle", 100);
-        
+
         // Create secondAccount with Initial Balance 2000
-        Account dinesh = new Account("126", "Dinesh", 2000);                
+        Account dinesh = new Account("126", "Dinesh", 2000);
 
         // Create a transfer request of 700 from firstAccount to secondAccount
         Transaction gilfoyleToDineshTransfer = new Transaction(TransactionType.TRANSFER_TYPE, gilfoyle, dinesh, 700);
         transactionManager.addTransaction(gilfoyleToDineshTransfer);
-        
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
         transactionManager.processPendingTransactions();
-        
+
         // Balance Check : FirstAccount -> 100
         balance = gilfoyle.getAccountBalance();
         System.out.println(gilfoyle.toString());
-        assertEquals(100, balance);        
-        
+        assertEquals(100, balance);
+
         // Balance Check : SecondAccount -> 2000
         balance = dinesh.getAccountBalance();
         System.out.println(dinesh.toString());
-        assertEquals(2000, balance);                
+        assertEquals(2000, balance);
 
         // Add a Deposit request of 900 to FirstAccount
         Transaction gilfoyleDeposit = new Transaction(TransactionType.DEPOSIT_TYPE, gilfoyle, 900);
         transactionManager.addTransaction(gilfoyleDeposit);
-        
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
         transactionManager.processPendingTransactions();
 
         // Balance Check : FirstAccount: 1000
         balance = gilfoyle.getAccountBalance();
         System.out.println(gilfoyle.toString());
-        assertEquals(1000, balance);        
+        assertEquals(1000, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
         transactionManager.processPendingTransactions();
@@ -161,23 +160,44 @@ public class TransactionTests {
         // Balance Check : FirstAccount -> 300
         balance = gilfoyle.getAccountBalance();
         System.out.println(gilfoyle.toString());
-        assertEquals(300, balance);        
+        assertEquals(300, balance);
 
         // Balance Check : SecondAccount -> 2700
         balance = dinesh.getAccountBalance();
         System.out.println(dinesh.toString());
-        assertEquals(2700, balance);                
+        assertEquals(2700, balance);
     }
 
     @Test
     public void test_Transfer_ThenRollback_AccountStatusRegainedItsInitialState() {
+        TransactionManager transactionManager = new TransactionManager();
+        int balance;
+        boolean hasPendingTransactionsFlag;
+
         // Create firstAccount with Initial Balance 2000
+        Account leonard = new Account("127", "Leonard", 2000);
+
         // Create secondAccount with Initial Balance 100
+        Account sheldon = new Account("128", "Sheldon", 100);
 
         // Create a transfer request of 700 from firstAccount to secondAccount
+        Transaction leonardToSheldonTransfer = new Transaction(
+                TransactionType.TRANSFER_TYPE, leonard, sheldon, 700);
+        transactionManager.addTransaction(leonardToSheldonTransfer);
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Balance Check : FirstAccount -> 1300
+        balance = leonard.getAccountBalance();
+        System.out.println(leonard.toString());
+        assertEquals(1300, balance);        
+
         // Balance Check : SecondAccount -> 800
+        balance = sheldon.getAccountBalance();
+        System.out.println(sheldon.toString());
+        assertEquals(800, balance);        
+
         // Perform a Rollback with the transaction Id of the transfer which is made
         // Check: there should be no pending transactions at this point
         // Balance Check : FirstAccount -> 2000

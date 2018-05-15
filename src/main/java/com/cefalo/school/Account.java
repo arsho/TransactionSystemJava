@@ -24,6 +24,12 @@ public class Account {
         this.accountBalance = 0;
     }
 
+    Account(String accountId, String name, int amount) {
+        this.accountId = accountId;
+        this.accountName = name;
+        this.accountBalance = amount;
+    }    
+    
     public void debitAccount(int amount) {
         this.accountBalance -= amount;
     }
