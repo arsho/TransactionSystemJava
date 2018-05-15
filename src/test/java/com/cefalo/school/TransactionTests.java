@@ -199,27 +199,80 @@ public class TransactionTests {
         assertEquals(800, balance);        
 
         // Perform a Rollback with the transaction Id of the transfer which is made
+        transactionManager.rollbackTransaction(leonardToSheldonTransfer);
+
         // Check: there should be no pending transactions at this point
+        hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
+        System.out.println(hasPendingTransactionsFlag);
+        assertEquals(false, hasPendingTransactionsFlag);
+
         // Balance Check : FirstAccount -> 2000
+        balance = leonard.getAccountBalance();
+        System.out.println(leonard.toString());
+        assertEquals(2000, balance);        
+
         // Balance Check : SecondAccount -> 100
+        balance = sheldon.getAccountBalance();
+        System.out.println(sheldon.toString());
+        assertEquals(100, balance);        
     }
 
     @Test
     public void test_Transfer_ThenWithdrawFromTheSecondAccount_ThenRollback() {
+        TransactionManager transactionManager = new TransactionManager();
+        int balance;
+        boolean hasPendingTransactionsFlag;
+        
         // Create firstAccount with Initial Balance 2000
-        // Create secondAccount with Initial Balance 100
+        Account leonard = new Account("127", "Leonard", 2000);
 
+        // Create secondAccount with Initial Balance 100
+        Account sheldon = new Account("128", "Sheldon", 100);
+        
         // Create a transfer request of 700 from firstAccount to secondAccount
+        Transaction leonardToSheldonTransfer = new Transaction(
+                TransactionType.TRANSFER_TYPE, leonard, sheldon, 700);
+        transactionManager.addTransaction(leonardToSheldonTransfer);
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Balance Check : FirstAccount -> 1300
+        balance = leonard.getAccountBalance();
+        System.out.println(leonard.toString());
+        assertEquals(1300, balance);        
+
         // Balance Check : SecondAccount -> 800
+        balance = sheldon.getAccountBalance();
+        System.out.println(sheldon.toString());
+        assertEquals(800, balance);        
+
         // Create a withdraw request of 600 from the secondAccount
+        Transaction sheldonWithdraw = new Transaction(
+                TransactionType.WITHDRAW_TYPE, sheldon, 600);
+        transactionManager.addTransaction(sheldonWithdraw);
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Perform a Rollback with the transaction Id of the transfer which is made
         // (Rollback should not be executed because of balance constraint)
+        transactionManager.rollbackTransaction(leonardToSheldonTransfer);
+
         // Perform a Rollback with the transaction Id of the withdraw which was made
+        transactionManager.rollbackTransaction(sheldonWithdraw);
+
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
         // Balance Check : FirstAccount -> 2000
+        balance = leonard.getAccountBalance();
+        System.out.println(leonard.toString());
+        assertEquals(2000, balance);        
+
         // Balance Check : SecondAccount -> 100
+        balance = sheldon.getAccountBalance();
+        System.out.println(sheldon.toString());
+        assertEquals(100, balance);        
     }
 }

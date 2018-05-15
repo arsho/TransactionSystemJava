@@ -11,11 +11,13 @@ public class Transaction {
     public int amount;
     public boolean isProcessed;
     public boolean isRollbacked;
+    public boolean isRollbackTried;
 
     Transaction(TransactionType transactionType, Account account, int amount) {
         this.transactionId = UUID.randomUUID();
         this.isProcessed = false;
         this.isRollbacked = false;
+        this.isRollbackTried = false;
         this.transactionType = transactionType;
         this.sourceAccount = account;
         this.amount = amount;
@@ -33,13 +35,21 @@ public class Transaction {
         Processor processor = new Processor();
         return processor.process(this);
     }
+    
+    public boolean rollback(){
+        Processor processor = new Processor();
+        return processor.processRollback(this);
+    }
 
     public boolean isPending() {
         return this.isProcessed;
     }
 
-    public boolean isIsRollbacked() {
-        return isRollbacked;
+    public boolean getIsRollbacked() {
+        return this.isRollbacked;
     }
 
+    public boolean getIsRollbackedTried() {
+        return this.isRollbackTried;
+    }
 }

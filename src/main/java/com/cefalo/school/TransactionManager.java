@@ -17,7 +17,8 @@ public class TransactionManager {
 
     public boolean hasPendingTransactions() {
         for (Transaction transaction : this.transactionList) {
-            if (transaction.isProcessed == false) {
+            if (transaction.isProcessed == false
+                    || (transaction.isRollbackTried == true && transaction.isRollbacked == false)) {
                 return true;
             }
         }
@@ -28,11 +29,14 @@ public class TransactionManager {
         for (Transaction transaction : this.transactionList) {
             if (transaction.isProcessed == false) {
                 transaction.process();
+            } else if (transaction.isRollbackTried == true && transaction.isRollbacked == false) {
+                transaction.rollback();
             }
         }
     }
 
-    public void rollbackTransaction(UUID transactionId) {
+    public void rollbackTransaction(Transaction transaction) {
         // To do
+        transaction.rollback();
     }
 }
