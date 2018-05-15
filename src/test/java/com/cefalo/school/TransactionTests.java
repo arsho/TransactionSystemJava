@@ -18,12 +18,10 @@ public class TransactionTests {
         // Pre-check : transactionManager Should have pending transactions at this point
         transactionManager.addTransaction(nicolaDeposit);
         boolean hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(true, hasPendingTransactionsFlag);
 
         // Account Balance Should be 0 at this point
         int balance = nicola.getAccountBalance();
-        System.out.println(nicola.toString());
         assertEquals(0, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
@@ -31,12 +29,10 @@ public class TransactionTests {
 
         // Check : there should not be any pending Transactions now
         hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
         // Check balance of the account which should be 100 now
         balance = nicola.getAccountBalance();
-        System.out.println(nicola.toString());
         assertEquals(100, balance);
 
         // Create a Withdraw of 50 on that account
@@ -48,12 +44,10 @@ public class TransactionTests {
 
         // check : No pending Transactions at this point
         hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
         // Check balance: should be 100-50 =50
         balance = nicola.getAccountBalance();
-        System.out.println(nicola.toString());
         assertEquals(50, balance);
     }
 
@@ -70,7 +64,6 @@ public class TransactionTests {
 
         // Check Balance: should be 75
         int balance = pikachu.getAccountBalance();
-        System.out.println(pikachu.toString());
         assertEquals(75, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
@@ -85,12 +78,10 @@ public class TransactionTests {
 
         // check : there should be pending transactions at this point
         boolean hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(true, hasPendingTransactionsFlag);
 
         // check Balance: should be 150
         balance = pikachu.getAccountBalance();
-        System.out.println(pikachu.toString());
         assertEquals(150, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
@@ -98,13 +89,11 @@ public class TransactionTests {
 
         // Check: there should be no pending transactions at this point
         hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
         // Balance Check : should be 50 (withdraw request of 100 should be successfull
         // at this point)
         balance = pikachu.getAccountBalance();
-        System.out.println(pikachu.toString());
         assertEquals(50, balance);
     }
 
@@ -129,12 +118,10 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 100
         balance = gilfoyle.getAccountBalance();
-        System.out.println(gilfoyle.toString());
         assertEquals(100, balance);
 
         // Balance Check : SecondAccount -> 2000
         balance = dinesh.getAccountBalance();
-        System.out.println(dinesh.toString());
         assertEquals(2000, balance);
 
         // Add a Deposit request of 900 to FirstAccount
@@ -146,7 +133,6 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount: 1000
         balance = gilfoyle.getAccountBalance();
-        System.out.println(gilfoyle.toString());
         assertEquals(1000, balance);
 
         // Run ProcessPendingTransactions() to process Pending TransactionRequests
@@ -154,17 +140,14 @@ public class TransactionTests {
 
         // Check: there should be no pending transactions at this point
         hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
         // Balance Check : FirstAccount -> 300
         balance = gilfoyle.getAccountBalance();
-        System.out.println(gilfoyle.toString());
         assertEquals(300, balance);
 
         // Balance Check : SecondAccount -> 2700
         balance = dinesh.getAccountBalance();
-        System.out.println(dinesh.toString());
         assertEquals(2700, balance);
     }
 
@@ -190,12 +173,10 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 1300
         balance = leonard.getAccountBalance();
-        System.out.println(leonard.toString());
         assertEquals(1300, balance);        
 
         // Balance Check : SecondAccount -> 800
         balance = sheldon.getAccountBalance();
-        System.out.println(sheldon.toString());
         assertEquals(800, balance);        
 
         // Perform a Rollback with the transaction Id of the transfer which is made
@@ -203,17 +184,14 @@ public class TransactionTests {
 
         // Check: there should be no pending transactions at this point
         hasPendingTransactionsFlag = transactionManager.hasPendingTransactions();
-        System.out.println(hasPendingTransactionsFlag);
         assertEquals(false, hasPendingTransactionsFlag);
 
         // Balance Check : FirstAccount -> 2000
         balance = leonard.getAccountBalance();
-        System.out.println(leonard.toString());
         assertEquals(2000, balance);        
 
         // Balance Check : SecondAccount -> 100
         balance = sheldon.getAccountBalance();
-        System.out.println(sheldon.toString());
         assertEquals(100, balance);        
     }
 
@@ -239,12 +217,10 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 1300
         balance = leonard.getAccountBalance();
-        System.out.println(leonard.toString());
         assertEquals(1300, balance);        
 
         // Balance Check : SecondAccount -> 800
         balance = sheldon.getAccountBalance();
-        System.out.println(sheldon.toString());
         assertEquals(800, balance);        
 
         // Create a withdraw request of 600 from the secondAccount
@@ -267,12 +243,10 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 2000
         balance = leonard.getAccountBalance();
-        System.out.println(leonard.toString());
         assertEquals(2000, balance);        
 
         // Balance Check : SecondAccount -> 100
         balance = sheldon.getAccountBalance();
-        System.out.println(sheldon.toString());
         assertEquals(100, balance);        
     }
 }

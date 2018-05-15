@@ -36,7 +36,6 @@ public class TransactionManager {
     }
 
     public void rollbackTransaction(Transaction transaction) {
-        // To do
         transaction.rollback();
     }
 }
