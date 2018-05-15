@@ -25,8 +25,7 @@ public class Account {
     }
 
     Account(String accountId, String name, int amount) {
-        this.accountId = accountId;
-        this.accountName = name;
+        this(accountId, name);
         this.accountBalance = amount;
     }    
     
