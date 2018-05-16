@@ -27,10 +27,11 @@ public class Processor {
         return isSucceed;
     }
 
-    public boolean processRollback(Transaction transaction) {
+    public boolean processRollback(Transaction transaction) throws IllegalAccessException {
         this.transaction = transaction;
         if (this.transaction.isRollbacked == true) {
-            System.out.println(transaction.transactionId + " is already rollbacked");
+            throw new IllegalAccessException(this.transaction.transactionId + 
+                    " has already rolled back.");
         }
         this.transaction = transaction;
         boolean isRollbacked = false;

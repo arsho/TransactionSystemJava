@@ -30,13 +30,12 @@ public class Transaction {
         this.destinationAccount = destinationAccount;
     }
 
-    /* Process transaction */
     public boolean process() {
         Processor processor = new Processor();
         return processor.process(this);
     }
     
-    public boolean rollback(){
+    public boolean rollback() throws IllegalAccessException{
         Processor processor = new Processor();
         return processor.processRollback(this);
     }

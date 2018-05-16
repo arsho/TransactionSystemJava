@@ -25,7 +25,7 @@ public class TransactionManager {
         return false;
     }
 
-    public void processPendingTransactions() {
+    public void processPendingTransactions() throws IllegalAccessException {
         for (Transaction transaction : this.transactionList) {
             if (transaction.isProcessed == false) {
                 transaction.process();
@@ -35,7 +35,7 @@ public class TransactionManager {
         }
     }
 
-    public void rollbackTransaction(Transaction transaction) {
-        transaction.rollback();
+    public boolean rollbackTransaction(Transaction transaction) throws IllegalAccessException {
+        return transaction.rollback();
     }
 }

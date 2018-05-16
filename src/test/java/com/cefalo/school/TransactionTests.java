@@ -7,7 +7,7 @@ import org.junit.Test;
 public class TransactionTests {
 
     @Test
-    public void depositAccountCheckBalanceAndThenWithdraw_AllTransactionsSuccessful() {
+    public void depositAccountCheckBalanceAndThenWithdraw_AllTransactionsSuccessful() throws IllegalAccessException, IllegalAccessException {
         TransactionManager transactionManager = new TransactionManager();
         // Create Account with Balance 0
         Account nicola = new Account("123", "Nicola");
@@ -52,7 +52,7 @@ public class TransactionTests {
     }
 
     @Test
-    public void test_WithDrawRequestForAmountGreaterThanAvailableBalance_TransactionExecutedWhenBalanceConstrainMet() {
+    public void test_WithDrawRequestForAmountGreaterThanAvailableBalance_TransactionExecutedWhenBalanceConstrainMet() throws IllegalAccessException {
 
         TransactionManager transactionManager = new TransactionManager();
         // Create account with 75 as initial Balance
@@ -98,7 +98,7 @@ public class TransactionTests {
     }
 
     @Test
-    public void testTransferRequestForAmountGreaterThanAvailableBalanceTransactionExecutedWhenBalanceConstrainMet() {
+    public void testTransferRequestForAmountGreaterThanAvailableBalanceTransactionExecutedWhenBalanceConstrainMet() throws IllegalAccessException {
         TransactionManager transactionManager = new TransactionManager();
         int balance;
         boolean hasPendingTransactionsFlag;
@@ -152,7 +152,7 @@ public class TransactionTests {
     }
 
     @Test
-    public void test_Transfer_ThenRollback_AccountStatusRegainedItsInitialState() {
+    public void test_Transfer_ThenRollback_AccountStatusRegainedItsInitialState() throws IllegalAccessException {
         TransactionManager transactionManager = new TransactionManager();
         int balance;
         boolean hasPendingTransactionsFlag;
@@ -173,11 +173,11 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 1300
         balance = leonard.getAccountBalance();
-        assertEquals(1300, balance);        
+        assertEquals(1300, balance);
 
         // Balance Check : SecondAccount -> 800
         balance = sheldon.getAccountBalance();
-        assertEquals(800, balance);        
+        assertEquals(800, balance);
 
         // Perform a Rollback with the transaction Id of the transfer which is made
         transactionManager.rollbackTransaction(leonardToSheldonTransfer);
@@ -188,25 +188,25 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 2000
         balance = leonard.getAccountBalance();
-        assertEquals(2000, balance);        
+        assertEquals(2000, balance);
 
         // Balance Check : SecondAccount -> 100
         balance = sheldon.getAccountBalance();
-        assertEquals(100, balance);        
+        assertEquals(100, balance);
     }
 
     @Test
-    public void test_Transfer_ThenWithdrawFromTheSecondAccount_ThenRollback() {
+    public void test_Transfer_ThenWithdrawFromTheSecondAccount_ThenRollback() throws IllegalAccessException {
         TransactionManager transactionManager = new TransactionManager();
         int balance;
         boolean hasPendingTransactionsFlag;
-        
+
         // Create firstAccount with Initial Balance 2000
         Account leonard = new Account("127", "Leonard", 2000);
 
         // Create secondAccount with Initial Balance 100
         Account sheldon = new Account("128", "Sheldon", 100);
-        
+
         // Create a transfer request of 700 from firstAccount to secondAccount
         Transaction leonardToSheldonTransfer = new Transaction(
                 TransactionType.TRANSFER_TYPE, leonard, sheldon, 700);
@@ -217,11 +217,11 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 1300
         balance = leonard.getAccountBalance();
-        assertEquals(1300, balance);        
+        assertEquals(1300, balance);
 
         // Balance Check : SecondAccount -> 800
         balance = sheldon.getAccountBalance();
-        assertEquals(800, balance);        
+        assertEquals(800, balance);
 
         // Create a withdraw request of 600 from the secondAccount
         Transaction sheldonWithdraw = new Transaction(
@@ -243,10 +243,61 @@ public class TransactionTests {
 
         // Balance Check : FirstAccount -> 2000
         balance = leonard.getAccountBalance();
-        assertEquals(2000, balance);        
+        assertEquals(2000, balance);
 
         // Balance Check : SecondAccount -> 100
         balance = sheldon.getAccountBalance();
-        assertEquals(100, balance);        
+        assertEquals(100, balance);
+    }
+
+    @Test
+    public void test_RollbackCannotBeCalledMoreThanOnce() throws IllegalAccessException {
+        TransactionManager transactionManager = new TransactionManager();
+        int balance;
+        boolean hasPendingTransactionsFlag;
+        boolean rollbackSuccessFlag;
+
+        // Create firstAccount with Initial Balance 2000
+        Account leonard = new Account("127", "Leonard", 2000);
+
+        // Create secondAccount with Initial Balance 100
+        Account sheldon = new Account("128", "Sheldon", 100);
+
+        // Create a transfer request of 700 from firstAccount to secondAccount
+        Transaction leonardToSheldonTransfer = new Transaction(
+                TransactionType.TRANSFER_TYPE, leonard, sheldon, 700);
+        transactionManager.addTransaction(leonardToSheldonTransfer);
+
+        // Run ProcessPendingTransactions() to process Pending TransactionRequests
+        transactionManager.processPendingTransactions();
+
+        // Balance Check : FirstAccount -> 1300
+        balance = leonard.getAccountBalance();
+        assertEquals(1300, balance);
+
+        // Balance Check : SecondAccount -> 800
+        balance = sheldon.getAccountBalance();
+        assertEquals(800, balance);
+
+        // Perform a Rollback with the transaction Id of the transfer which is made
+        // (Rollback should not be executed because of balance constraint)
+        rollbackSuccessFlag = transactionManager.rollbackTransaction(leonardToSheldonTransfer);
+        assertEquals(rollbackSuccessFlag, true);
+
+        balance = leonard.getAccountBalance();
+        assertEquals(2000, balance);
+
+        // Balance Check : SecondAccount -> 800
+        balance = sheldon.getAccountBalance();
+        assertEquals(100, balance);
+        
+        
+        try {
+            rollbackSuccessFlag = transactionManager.rollbackTransaction(leonardToSheldonTransfer);
+        } catch (IllegalAccessException e) {
+            String errorMessage = leonardToSheldonTransfer.transactionId + " has already rolled back.";
+            assertEquals(errorMessage, e.getMessage());
+        }
+
     }
 }
